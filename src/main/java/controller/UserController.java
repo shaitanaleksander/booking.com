@@ -4,26 +4,35 @@ import com.google.gson.Gson;
 import model.User;
 import repositiry.UserRepository;
 
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.put;
 
 class UserController {
 
     static void initControllers(Gson gson) {
+
         var userRepository = new UserRepository();
 
-        get("/user/:name", (req, res) -> {
-            var userName =  req.params(":name");
-            var user =  new User().setName(userName);
+        get("/api/users/:id", (req, res) -> {
+            var userId = req.params("id");
             res.status(200);
-            return userRepository.getUser(user);
-
+            return userRepository.getUser(userId);
         }, gson::toJson);
 
-        post("/user", (req, res) -> {
+        post("/api/users", (req, res) -> {
             var user = gson.fromJson(req.body(), User.class);
-            userRepository.saveUser(user);
+
+            user = userRepository.saveUser(user);
             res.status(200);
-            return ""; // TODO: 19.05.18 return user from repository
-        });
+            return user;
+        }, gson::toJson);
+
+        put("/api/users", (req, res) -> {
+            var user = gson.fromJson(req.body(), User.class);
+            userRepository.updateUser(user);
+            res.status(200);
+            return "";
+        }, gson::toJson);
     }
 }
