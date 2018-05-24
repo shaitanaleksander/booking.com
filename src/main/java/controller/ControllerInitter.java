@@ -14,5 +14,6 @@ public class ControllerInitter {
         Gson gson = builder.setPrettyPrinting().create();
 
         UserController.initControllers(gson);
+        LogInController.initControllers();
     }
 }
