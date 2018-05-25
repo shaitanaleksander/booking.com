@@ -25,7 +25,6 @@ public class UserRepository {
     public void updateUser(User user) {
         var updateQuery = datastore.createQuery(User.class).field("_id").equal(user.getId());
         var ops = datastore.createUpdateOperations(User.class);
-
         if (user.getName() != null) ops = ops.set("name", user.getName());
         if (user.getPassword() != null) ops = ops.set("password", user.getPassword());
         if (user.getRole() != null) ops = ops.set("role", user.getRole());
@@ -37,7 +36,7 @@ public class UserRepository {
         datastore.delete(user);
     }
 
-    public User getUserByNameAndPasword(String name, String password) {
+    public User getUserByNameAndPassword(String name, String password) {
         return this.datastore.createQuery(User.class).filter("name = ", name).filter("password", password).get();
     }
 

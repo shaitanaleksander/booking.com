@@ -1,5 +1,6 @@
 package controller;
 
+import service.JWTService;
 import service.UserService;
 
 import static spark.Spark.*;
@@ -9,14 +10,17 @@ public class LogInController {
 
     public static void initControllers() {
         UserService userService = UserService.getUserService();
-
+        var jwnService = JWTService.getJwtService();
         get("/api/logIn/:name/:password", (req, res) -> {
             var name = req.params("name");
             var password = req.params("password");
-            var token = userService.logInUser(name, password);
+            var user = userService.logInUser(name, password);
+            if (user == null) {
+                res.status(404);
+                return "";
+            }
             res.status(200);
-            System.out.println(token);
-            return token;
+            return jwnService.createToken(user.getId().toHexString());
         });
     }
 }

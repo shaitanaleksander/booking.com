@@ -31,16 +31,16 @@ public class JWTService {
                 .sign(algorithm);
     }
 
-    public String verifyToken(String token) throws JWTVerificationException {
+    public String verifyToken(String token)throws JWTVerificationException {
         if (token == null) {
             throw new JWTVerificationException("token not present");
         }
 
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("auth0")
-                    .build();
-            DecodedJWT jwt = verifier.verify(token);
-            return jwt.getClaims().get("userId").asString();
+        JWTVerifier verifier = JWT.require(algorithm)
+                .withIssuer("auth0")
+                .build();
+        DecodedJWT jwt = verifier.verify(token);
+        return jwt.getClaims().get("userId").asString();
     }
 
     public static JWTService getJwtService() {

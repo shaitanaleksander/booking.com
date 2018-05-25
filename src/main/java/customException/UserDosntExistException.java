@@ -1,10 +1,10 @@
 package customException;
 
-public class UserDontExistException extends Exception {
+public class UserDosntExistException extends Exception {
 
     private static String exception = "cannot fond user";
 
-    public UserDontExistException() {
+    public UserDosntExistException() {
         super(exception);
     }
 }

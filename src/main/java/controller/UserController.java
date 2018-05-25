@@ -2,8 +2,8 @@ package controller;
 
 import com.google.gson.Gson;
 import model.User;
-import repositiry.UserRepository;
 import service.JWTService;
+import service.UserService;
 
 import static spark.Spark.*;
 
@@ -11,41 +11,33 @@ class UserController {
 
     static void initControllers(Gson gson) {
 
-        var userRepository = UserRepository.getRepository();
         var jwnService = JWTService.getJwtService();
-        get("/api/users/:id", (req, res) -> {
+        var userService = UserService.getUserService();
 
-            var token = req.headers("token");
-
-            if (!jwnService.verifyToken(token)) {
-                res.status(401);
-                return "unauthorized";
-            }
-
-            var userId = req.params("id");
-            res.status(200);
-            return userRepository.getUser(userId);
+        get("/api/user", (req, res) -> {
+            var userId = jwnService.verifyToken(req.headers("token"));
+            return userService.getUserById(userId);
         }, gson::toJson);
+
+        get("/api/users/:id", ((req, res) -> {
+            var userId = req.params("id");
+            return userService.getUserById(userId);
+        }), gson::toJson);
 
         post("/api/users", (req, res) -> {
             var user = gson.fromJson(req.body(), User.class);
-
-            user = userRepository.saveUser(user);
-            res.status(201);
-            return user;
+            return userService.saveUser(user);
         }, gson::toJson);
 
         put("/api/users", (req, res) -> {
             var user = gson.fromJson(req.body(), User.class);
-            userRepository.updateUser(user);
-            res.status(200);
-            return "";
+            userService.updateUser(user);
+            return user;
         }, gson::toJson);
 
         delete("/api/users/:id", (req, res) -> {
             var userId = req.params("id");
-            userRepository.deleteUser(userId);
-            res.status(202);
+            userService.deleteUser(userId);
             return "";
         });
     }
